@@ -1,0 +1,7 @@
+{
+  "serialPort": "COM3",
+  "dbConnString": "mariadb://user:password@localhost:3306/dbname",
+  "serverPort": 3000,
+  "dbPoolLimit": 5,
+  "serverUrl": "http://localhost"
+}
