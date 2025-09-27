@@ -24,17 +24,25 @@ port.on('open', () => {
 
 parser.on('data', async (data: string) => {
   console.log(`Received: ${data}`);
-  // Parse value from "Light: 0.75"
-  const match = data.match(/Light:\s*([\d.]+)/);
-  if (match) {
-    const value = parseFloat(match[1]);
-    const serverUrl = `${config.serverUrl}:${config.serverPort}/reading`;
+  // Parse new format: {pin}:{type}:{vendor}:{model}:{reading}
+  const parts = data.trim().split(":");
+  if (parts.length === 5) {
+    const [pin, type, vendor, model, reading] = parts;
+    const serverUrl = server.getUrl('/reading');
     try {
-      const response = await axios.post(serverUrl, { value });
+      const response = await axios.post(serverUrl, {
+        pin: Number(pin),
+        type,
+        vendor,
+        model,
+        reading: Number(reading)
+      });
       console.log('Server response:', response.data);
     } catch (err: any) {
       console.error('Failed to send reading:', err.message);
     }
+  } else {
+    console.warn('Invalid data format:', data);
   }
 });
 

@@ -1,5 +1,7 @@
+import * as fs from 'fs';
+import * as path from 'path';
+import mariadb from 'mariadb';
 import { DataSource, EntityTarget } from 'typeorm';
-import { Sensor } from './data/models/Sensor';
 import { Reading } from './data/models/Reading';
 import { Conf } from '../shared/types/conf';
 
@@ -14,7 +16,7 @@ export class DB {
       database: config.dbName,
       port: Number(config.dbPort) || 3306,
       type: 'mariadb',
-      entities: [Sensor, Reading],
+      entities: [Reading],
       synchronize: true,
     });
   }
@@ -23,7 +25,7 @@ export class DB {
     await this.dataSource.initialize();
   }
 
-  getRepo(repo: EntityTarget<Sensor | Reading>) {
+  getRepo(repo: EntityTarget<Reading>) {
     return this.dataSource.getRepository(repo);
   }
 }

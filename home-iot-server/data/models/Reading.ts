@@ -1,19 +1,27 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import 'reflect-metadata';
-import { Sensor } from './Sensor';
 
 @Entity()
 export class Reading {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column('bigint')
-  timestamp!: number;
+  @Column('datetime')
+  timestamp!: Date;
+
+  @Column()
+  pin!: number;
+
+  @Column({ type: 'varchar', length: 100 })
+  vendor!: string;
+
+  @Column({ type: 'varchar', length: 100 })
+  model!: string;
+
+  @Column()
+  type!: string;
 
   @Column('float')
   value!: number;
-
-  @ManyToOne(() => Sensor)
-  @JoinColumn({ name: 'sensor_id' })
-  sensor!: Sensor;
 }

@@ -1,11 +1,11 @@
 {
-  "dbHost": "localhost",
-  "dbPort": 3306,
-  "dbUser": "user",
-  "dbPassword": "password",
-  "dbName": "dbname",
-  "serialPort": "COM3",
-  "serverPort": 3000,
-  "dbPoolLimit": 5,
-  "serverUrl": "http://localhost"
+  "dbHost": "dbHost",
+  "dbPort": 1111,
+  "dbUser": "dbUser",
+  "dbPassword": "dbPassword",
+  "dbName": "dbName",
+  "serialPort": "serialPort",
+  "serverPort": 1111,
+  "dbPoolLimit": 1,
+  "serverUrl": "serverUrl"
 }
