@@ -12,6 +12,7 @@ void delaySeconds(int totalDelaySec) {
 void setup() {
   Serial.begin(9600);
   
+  analogReference(INTERNAL);
   sensors.addSensor(Sensor(A0, 'L', "Arduino Beginner Kit", "Phototransistor"));
   sensors.addSensor(Sensor(A1, 'T', "Arduino Beginner Kit", "TMP36"));
   sensors.init();
