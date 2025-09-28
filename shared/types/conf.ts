@@ -8,4 +8,6 @@ export interface Conf {
   serverPort: number;
   dbPoolLimit: number;
   serverUrl: string;
+  llmUrl: string;
+  llmModel: string;
 }

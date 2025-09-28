@@ -8,7 +8,8 @@
   "main": "index.js",
   "scripts": {
     "serial-reader": "npx ts-node ./serial-reader/serial-reader.ts",
-    "iot-server": "npx ts-node ./home-iot-server/server.ts"
+    "iot-server": "npx ts-node ./home-iot-server/server.ts",
+    "analyze-hourly-temperature": "npx ts-node ./analyzer/analyze-hourly-temperature.ts"
   },
   "dependencies": {
     "@serialport/parser-readline": "^13.0.0",

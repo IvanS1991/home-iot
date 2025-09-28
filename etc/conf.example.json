@@ -7,5 +7,7 @@
   "serialPort": "serialPort",
   "serverPort": 1111,
   "dbPoolLimit": 1,
-  "serverUrl": "serverUrl"
+  "serverUrl": "serverUrl",
+  "llmUrl": "llmUrl",
+  "llmModel": "llmModel"
 }
