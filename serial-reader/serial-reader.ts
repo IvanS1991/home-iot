@@ -16,7 +16,7 @@ const baudRate = 9600;
 
 const port = new SerialPort({ path: portName, baudRate });
 const parser = port.pipe(new ReadlineParser({ delimiter: '\n' }));
-const server = new Server(config)
+const server = new Server(config);
 
 port.on('open', () => {
   console.log(`Serial port ${portName} opened at ${baudRate} baud.`);

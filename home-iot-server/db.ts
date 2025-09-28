@@ -1,9 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import mariadb from 'mariadb';
 import { DataSource, EntityTarget } from 'typeorm';
 import { Reading } from './data/models/Reading';
 import { Conf } from '../shared/types/conf';
+import { HourlyAvgReading } from './data/models/HourlyAvgReading';
 
 export class DB {
   private dataSource: DataSource;
@@ -16,7 +14,7 @@ export class DB {
       database: config.dbName,
       port: Number(config.dbPort) || 3306,
       type: 'mariadb',
-      entities: [Reading],
+      entities: [Reading, HourlyAvgReading],
       synchronize: true,
     });
   }
@@ -25,7 +23,7 @@ export class DB {
     await this.dataSource.initialize();
   }
 
-  getRepo(repo: EntityTarget<Reading>) {
+  getRepo<TTarget extends (Reading | HourlyAvgReading)>(repo: EntityTarget<TTarget>) {
     return this.dataSource.getRepository(repo);
   }
 }
