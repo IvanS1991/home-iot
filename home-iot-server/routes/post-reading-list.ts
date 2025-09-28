@@ -16,7 +16,7 @@ type PostReadingsResponse = Response<{
 
 
 export default (app: App, db: DB) => {
-  app.getInstance().post('/reading', async (req: PostReadingsRequest, res: PostReadingsResponse) => {
+  app.getInstance().post('/reading/list', async (req: PostReadingsRequest, res: PostReadingsResponse) => {
     const { type, size, offset } = req.body;
     const repo = db.getRepo(Reading);
     // Build query conditionally
