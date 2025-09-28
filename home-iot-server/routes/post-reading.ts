@@ -1,9 +1,18 @@
+import { Request, Response } from "express";
 import { App } from "../app";
 import { Reading } from "../data/models/Reading";
 import { DB } from "../db";
 
+type PostReadingRequest = Request<{}, {}, {
+  pin: number;
+  type: string;
+  vendor: string;
+  model: string;
+  reading: number;
+}>;
+
 export default (app: App, db: DB) => {
-  app.getInstance().post('/reading', async (req: any, res: any) => {
+  app.getInstance().post('/reading', async (req: PostReadingRequest, res: Response) => {
     const {
       pin,
       type,
