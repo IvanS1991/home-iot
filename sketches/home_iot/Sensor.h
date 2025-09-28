@@ -15,7 +15,7 @@ class Sensor {
     Sensor(); // Default constructor
     Sensor(int pin, char type, String vendor, String model);
     void init();
-    int getReading();
+    int getReading(int samples);
     String getOutputLine();
 };
 

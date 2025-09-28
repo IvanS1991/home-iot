@@ -13,6 +13,7 @@ void setup() {
   Serial.begin(9600);
   
   sensors.addSensor(Sensor(A0, 'L', "Arduino Beginner Kit", "Phototransistor"));
+  sensors.addSensor(Sensor(A1, 'T', "Arduino Beginner Kit", "TMP36"));
   sensors.init();
 }
 

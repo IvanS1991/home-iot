@@ -13,8 +13,13 @@ void Sensor::init() {
   pinMode(sensorPin, INPUT);
 }
 
-int Sensor::getReading() {
-  return analogRead(sensorPin);
+int Sensor::getReading(int samples = 16) {
+  long sum = 0;
+  for (int i = 0; i < samples; ++i) {
+    sum += analogRead(sensorPin);
+    delay(5);
+  }
+  return sum / (float)samples; // Return raw ADC value
 }
 
 String Sensor::getOutputLine() {
