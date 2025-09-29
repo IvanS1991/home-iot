@@ -2,7 +2,7 @@ import axios from "axios";
 import JSON5 from "json5";
 import { Conf } from '../shared/types/conf';
 import { Server } from '../shared/helpers/server';
-import { ANALOG_MAX, VREF } from "../shared/constants/arduino";
+import { ANALOG_MAX } from "../shared/constants/arduino";
 import { getTimeFrame } from "../shared/helpers/time";
 
 export default async function main(config: Conf, server: Server) {
@@ -11,7 +11,7 @@ export default async function main(config: Conf, server: Server) {
   const { from, to } = getTimeFrame(6);
 
   const body = {
-    type: "T", // Change as needed
+    type: "L", // Change as needed
     from,
     to,
     size: 10,
@@ -23,19 +23,19 @@ export default async function main(config: Conf, server: Server) {
 
   hourlyData.rows = hourlyData.rows.map((entry: any) => ({
     timestamp: entry.timestamp,
-    temperatureC: ((entry.avg_value / ANALOG_MAX) * VREF - 0.5) / 0.01,
+    lightLevel: entry.avg_value / ANALOG_MAX,
   }));
 
   // 2. Send data to LLM for analysis
   const llmBody = {
     model: config.llmModel,
     prompt: `
-    Analyze the following hourly temperature data (in Celsius). Respond with the following data structure:
+    Analyze the following hourly light level data (in Lux). Respond with the following data structure:
     { comfort_level: 1 | 2 | 3, trend: 1 | 0 | -1, expected_changes: string }
     
     Where:
-    - comfort_level: 1 (low), 2 (medium), 3 (high) based on how comfortable the temperature is.
-    - trend: 1 (rising), 0 (stable), -1 (falling) based on the temperature trend. Stable means changes within ±0.5°C.
+    - comfort_level: 1 (low), 2 (medium), 3 (high) based on how comfortable the light level is.
+    - trend: 1 (rising), 0 (stable), -1 (falling) based on the light level trend. Stable means changes within ±50 Lux.
     - expected_changes: a brief description of any expected changes in the next 6 hours, based on the current day in Southeastern Europe.
 
     Add no additional formatting or text.
@@ -64,9 +64,9 @@ export default async function main(config: Conf, server: Server) {
     console.log(llmJson);
 
     const sixHourAnalysisUrl = server.getUrl("/six-hour-analysis");
-    const values = hourlyData.rows.map((r: any) => r.temperatureC);
+    const values = hourlyData.rows.map((r: any) => r.lightLevel);
     const analysisBody = {
-      type: "T",
+      type: "L",
       startTime: from,
       endTime: to,
       minValue: Math.min(...values),

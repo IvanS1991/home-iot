@@ -9,7 +9,7 @@
   "scripts": {
     "serial-reader": "npx ts-node ./serial-reader/serial-reader.ts",
     "iot-server": "npx ts-node ./home-iot-server/server.ts",
-    "analyze-hourly-temperature": "npx ts-node ./analyzer/analyze-hourly-temperature.ts"
+    "analyze-hourly": "npx ts-node ./analyzer/analyze-hourly.ts"
   },
   "dependencies": {
     "@serialport/parser-readline": "^13.0.0",
@@ -17,6 +17,7 @@
     "axios": "^1.6.7",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
+    "json5": "^2.2.3",
     "mariadb": "^3.1.4",
     "mysql2": "^3.15.1",
     "serialport": "^13.0.0",

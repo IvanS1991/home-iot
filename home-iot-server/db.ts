@@ -2,6 +2,7 @@ import { DataSource, EntityTarget } from 'typeorm';
 import { Reading } from './data/models/Reading';
 import { Conf } from '../shared/types/conf';
 import { HourlyAvgReading } from './data/models/HourlyAvgReading';
+import { SixHourAnalysis } from './data/models/SixHourAnalysis';
 
 export class DB {
   private dataSource: DataSource;
@@ -14,7 +15,7 @@ export class DB {
       database: config.dbName,
       port: Number(config.dbPort) || 3306,
       type: 'mariadb',
-      entities: [Reading, HourlyAvgReading],
+      entities: [Reading, HourlyAvgReading, SixHourAnalysis],
       synchronize: true,
     });
   }
@@ -23,7 +24,7 @@ export class DB {
     await this.dataSource.initialize();
   }
 
-  getRepo<TTarget extends (Reading | HourlyAvgReading)>(repo: EntityTarget<TTarget>) {
+  getRepo<TTarget extends (Reading | HourlyAvgReading | SixHourAnalysis)>(repo: EntityTarget<TTarget>) {
     return this.dataSource.getRepository(repo);
   }
 }
