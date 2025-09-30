@@ -13,6 +13,6 @@
   "include": [
     "serial-reader/**/*.ts", 
     "home-iot-server/**/*.ts"
-  ],
+, "shared/models/HourlyAvgReading.ts", "shared/models/Reading.ts", "shared/models/SixHourAnalysis.ts"  ],
   "exclude": ["node_modules"]
 }

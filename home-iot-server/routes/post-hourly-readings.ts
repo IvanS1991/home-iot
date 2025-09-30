@@ -2,20 +2,12 @@ import { Request, Response } from "express";
 import { Between } from 'typeorm';
 import { App } from "../app";
 import { DB } from "../db";
-import { HourlyAvgReading } from "../data/models/HourlyAvgReading";
+import { HourlyAvgReading } from "../../shared/models/HourlyAvgReading";
+import { PostHourlyReadingsRequestPayload, PostHourlyReadingsResponsePayload } from "../../shared/types/hourly-readings";
 
-type PostHourlyReadingsRequest = Request<{}, {}, {
-  type: string;
-  from: string; // ISO date string
-  to: string;   // ISO date string
-  size?: number;
-  offset?: number;
-}>;
+type PostHourlyReadingsRequest = Request<{}, {}, PostHourlyReadingsRequestPayload>;
 
-type PostHourlyReadingsResponse = Response<{
-  rows: HourlyAvgReading[];
-  total: number;
-} | { error: string; }>;
+type PostHourlyReadingsResponse = Response<PostHourlyReadingsResponsePayload | { error: string; }>;
 
 
 export default (app: App, db: DB) => {

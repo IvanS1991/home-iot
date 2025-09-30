@@ -1,8 +1,8 @@
 import { DataSource, EntityTarget } from 'typeorm';
-import { Reading } from './data/models/Reading';
+import { Reading } from '../shared/models/Reading';
 import { Conf } from '../shared/types/conf';
-import { HourlyAvgReading } from './data/models/HourlyAvgReading';
-import { SixHourAnalysis } from './data/models/SixHourAnalysis';
+import { HourlyAvgReading } from '../shared/models/HourlyAvgReading';
+import { SixHourAnalysis } from '../shared/models/SixHourAnalysis';
 
 export class DB {
   private dataSource: DataSource;

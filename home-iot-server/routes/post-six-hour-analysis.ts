@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { App } from "../app";
 import { DB } from "../db";
-import { SixHourAnalysis } from "../data/models/SixHourAnalysis";
+import { SixHourAnalysis } from "../../shared/models/SixHourAnalysis";
 
 type PostSixHourAnalysisRequest = Request<{}, {}, {
   type: string;

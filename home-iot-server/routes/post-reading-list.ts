@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { App } from "../app";
-import { Reading } from "../data/models/Reading";
+import { Reading } from "../../shared/models/Reading";
 import { DB } from "../db";
 
 type PostReadingsRequest = Request<{}, {}, {

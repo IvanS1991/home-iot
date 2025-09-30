@@ -2,49 +2,43 @@ import axios from "axios";
 import JSON5 from "json5";
 import { Conf } from '../shared/types/conf';
 import { Server } from '../shared/helpers/server';
-import { ANALOG_MAX } from "../shared/constants/arduino";
-import { getTimeFrame } from "../shared/helpers/time";
+import { PostHourlyReadingsRequestPayload, PostHourlyReadingsResponsePayload } from "../shared/types/hourly-readings";
+import { LLMRequestPayload, LLMResponsePayload } from "../shared/types/llm";
+import { HourlyAvgReading } from "../shared/models/HourlyAvgReading";
+import { TimeFrame } from "../shared/types/api";
+import { raw } from "body-parser";
 
-export default async function main(config: Conf, server: Server) {
+export default async function main<TOutput>(
+    config: Conf,
+    server: Server,
+    type: string,
+    timeFrame: TimeFrame,
+    mapper: (data: HourlyAvgReading) => TOutput,
+    getPrompt: (data: Array<TOutput>) => string,
+    getAnalysisValue: (data: TOutput) => number
+) {
   // 1. Fetch hourly readings from your API
   const hourlyReadingUrl = server.getUrl("/reading/hourly");
-  const { from, to } = getTimeFrame(6);
 
-  const body = {
-    type: "L", // Change as needed
-    from,
-    to,
+  const body: PostHourlyReadingsRequestPayload = {
+    ...timeFrame,
+    type,
     size: 10,
     offset: 0
   };
 
-  const hourlyRes = await axios.post(hourlyReadingUrl, body);
+  const hourlyRes = await axios.post<PostHourlyReadingsResponsePayload>(hourlyReadingUrl, body);
   const hourlyData = hourlyRes.data;
-
-  hourlyData.rows = hourlyData.rows.map((entry: any) => ({
-    timestamp: entry.timestamp,
-    lightLevel: entry.avg_value / ANALOG_MAX,
-  }));
+  const hourlyDataRows = hourlyData.rows.map(mapper);
 
   // 2. Send data to LLM for analysis
-  const llmBody = {
+  const llmBody: LLMRequestPayload = {
     model: config.llmModel,
-    prompt: `
-    Analyze the following hourly light level data (in Lux). Respond with the following data structure:
-    { comfort_level: 1 | 2 | 3, trend: 1 | 0 | -1, expected_changes: string }
-    
-    Where:
-    - comfort_level: 1 (low), 2 (medium), 3 (high) based on how comfortable the light level is.
-    - trend: 1 (rising), 0 (stable), -1 (falling) based on the light level trend. Stable means changes within ±50 Lux.
-    - expected_changes: a brief description of any expected changes in the next 6 hours, based on the current day in Southeastern Europe.
-
-    Add no additional formatting or text.
-    Data:
-    \n${JSON.stringify(hourlyData)}`,
+    prompt: getPrompt(hourlyDataRows),
     stream: false
   };
 
-  const llmRes = await axios.post(config.llmUrl, llmBody);
+  const llmRes = await axios.post<LLMResponsePayload>(config.llmUrl, llmBody);
   const llmOutput = llmRes.data;
 
   const indexOfJsonStart = llmOutput.response.indexOf('{');
@@ -64,11 +58,11 @@ export default async function main(config: Conf, server: Server) {
     console.log(llmJson);
 
     const sixHourAnalysisUrl = server.getUrl("/six-hour-analysis");
-    const values = hourlyData.rows.map((r: any) => r.lightLevel);
+    const values = hourlyDataRows.map(getAnalysisValue);
     const analysisBody = {
-      type: "L",
-      startTime: from,
-      endTime: to,
+      type,
+      startTime: timeFrame.from,
+      endTime: timeFrame.to,
       minValue: Math.min(...values),
       maxValue: Math.max(...values),
       avgValue: values.reduce((sum: number, v: number) => sum + v, 0) / values.length,
