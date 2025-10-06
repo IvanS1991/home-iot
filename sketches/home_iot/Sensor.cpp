@@ -9,21 +9,9 @@ Sensor::Sensor(int pin, char type, String vendor, String model) {
   sensorModel = model;
 }
 
-void Sensor::init() {
-  pinMode(sensorPin, INPUT);
-}
-
-int Sensor::getReading(int samples = 16) {
-  long sum = 0;
-  for (int i = 0; i < samples; ++i) {
-    sum += analogRead(sensorPin);
-    delay(5);
-  }
-  return sum / (float)samples; // Return raw ADC value
-}
+// Do NOT implement pure virtuals here
 
 String Sensor::getOutputLine() {
-  int reading = Sensor::getReading();
-
-  return String(sensorPin) + ":" + String(sensorType) + ":" + sensorVendor + ":" + sensorModel + ":" + String(reading);
+  int reading = getReading();
+  return String(sensorPin) + ":" + sensorType + ":" + sensorVendor + ":" + sensorModel + ":" + String(reading);
 }

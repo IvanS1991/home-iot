@@ -1,11 +1,11 @@
-// Sensor.h
-#ifndef Sensor_h
-#define Sensor_h
+#ifndef SENSOR_H
+#define SENSOR_H
 
 #include <Arduino.h>
 
+// ===== Base Sensor =====
 class Sensor {
-  private:
+  protected:
     int sensorPin;
     char sensorType;
     String sensorVendor;
@@ -14,8 +14,10 @@ class Sensor {
   public:
     Sensor(); // Default constructor
     Sensor(int pin, char type, String vendor, String model);
-    void init();
-    int getReading(int samples);
+    virtual ~Sensor() {}
+
+    virtual void init() = 0;
+    virtual int getReading(int samples = 16) = 0;
     String getOutputLine();
 };
 

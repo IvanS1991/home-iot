@@ -9,12 +9,12 @@
 
 class SensorRegistry {
   private:
-    Sensor sensors[MAX_SENSORS];
+    Sensor* sensors[MAX_SENSORS];
     int sensorCount;
 
   public:
     SensorRegistry();
-    void addSensor(const Sensor& sensor);
+    void addSensor(Sensor* sensor);
     void init();
     void getOutputLines(String lines[], int& count);
 };

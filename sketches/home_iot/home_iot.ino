@@ -1,5 +1,8 @@
-#include "Sensor.h";
-#include "SensorRegistry.h";
+#include "Sensor.h"
+#include "TMP36Sensor.h"
+#include "ArduinoKitPhototransistorSensor.h"
+#include "DS18B20Sensor.h"
+#include "SensorRegistry.h"
 
 SensorRegistry sensors = SensorRegistry();
 
@@ -12,15 +15,15 @@ void delaySeconds(int totalDelaySec) {
 void setup() {
   Serial.begin(9600);
   
-  analogReference(INTERNAL);
-  sensors.addSensor(Sensor(A0, 'L', "Arduino Beginner Kit", "Phototransistor"));
-  sensors.addSensor(Sensor(A1, 'T', "Arduino Beginner Kit", "TMP36"));
+  sensors.addSensor(new DS18B20Sensor(0));
+  sensors.addSensor(new DS18B20Sensor(2));
+  sensors.addSensor(new ArduinoKitPhototransistorSensor(27));
   sensors.init();
 }
 
 void loop() {
   String lines[MAX_SENSORS];
-  int count;
+  int count = 0;
   sensors.getOutputLines(lines, count);
 
   for (int i = 0; i < count; ++i) {
