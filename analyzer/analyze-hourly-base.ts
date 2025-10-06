@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Conf } from '../shared/types/conf';
+import { Config } from '../shared/types/config';
 import { Server } from '../shared/helpers/server';
 import { PostHourlyReadingsRequestPayload, PostHourlyReadingsResponsePayload } from "../shared/types/hourly-readings";
 import { LLMRequestPayload, LLMResponsePayload } from "../shared/types/llm";
@@ -8,7 +8,7 @@ import { TimeFrame } from "../shared/types/api";
 import { LLMAnalysisOutput } from "./types/llm-output";
 
 export default async function main<TOutput>(
-    config: Conf,
+    config: Config,
     server: Server,
     type: string,
     timeFrame: TimeFrame,
@@ -33,12 +33,12 @@ export default async function main<TOutput>(
 
   // 2. Send data to LLM for analysis
   const llmBody: LLMRequestPayload = {
-    model: config.llmModel,
+    model: config.localLLM.model,
     prompt: getPrompt(hourlyDataRows),
     stream: false
   };
 
-  const llmRes = await axios.post<LLMResponsePayload>(config.llmUrl, llmBody);
+  const llmRes = await axios.post<LLMResponsePayload>(config.localLLM.url, llmBody);
   const llmOutput = llmRes.data;
 
   try {

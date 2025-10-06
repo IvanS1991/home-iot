@@ -1,19 +1,19 @@
 import { DataSource, EntityTarget } from 'typeorm';
 import { Reading } from '../shared/models/Reading';
-import { Conf } from '../shared/types/conf';
+import { Config } from '../shared/types/config';
 import { HourlyAvgReading } from '../shared/models/HourlyAvgReading';
 import { SixHourAnalysis } from '../shared/models/SixHourAnalysis';
 
 export class DB {
   private dataSource: DataSource;
 
-  constructor(config: Conf) {
+  constructor(config: Config) {
     this.dataSource = new DataSource({
-      host: config.dbHost,
-      username: config.dbUser,
-      password: config.dbPassword,
-      database: config.dbName,
-      port: Number(config.dbPort) || 3306,
+      host: config.edge.database.host,
+      username: config.edge.database.user,
+      password: config.edge.database.password,
+      database: config.edge.database.name,
+      port: Number(config.edge.database.port) || 3306,
       type: 'mariadb',
       entities: [Reading, HourlyAvgReading, SixHourAnalysis],
       synchronize: true,

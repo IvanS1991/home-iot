@@ -1,13 +1,45 @@
 {
-  "dbHost": "dbHost",
-  "dbPort": 1111,
-  "dbUser": "dbUser",
-  "dbPassword": "dbPassword",
-  "dbName": "dbName",
-  "serialPort": "serialPort",
-  "serverPort": 1111,
-  "dbPoolLimit": 1,
-  "serverUrl": "serverUrl",
-  "llmUrl": "llmUrl",
-  "llmModel": "llmModel"
+  "edge": {
+    "host": "edgeHost",
+    "port": 1111,
+    "database": {
+      "host": "dbHost",
+      "port": 1111,
+      "user": "dbUser",
+      "password": "dbPassword",
+      "name": "dbName",
+      "poolLimit": 1
+    }
+  },
+  "microcontrollers": [
+    {
+      "id": "microcontroller1",
+      "vendor": "microcontrollerVendor",
+      "model": "microcontrollerModel",
+      "serialPort": "serialPort1",
+      "baudRate": 9600,
+      "sensors": [
+        {
+          "id": "sensor1",
+          "vendor": "sensorVendor",
+          "model": "sensorModel",
+          "class": "temperature",
+          "type": "T",
+          "pin": 14
+        },
+        {
+          "id": "sensor2",
+          "vendor": "sensorVendor",
+          "model": "sensorModel",
+          "class": "light",
+          "type": "L",
+          "pin": 15
+        }
+      ]
+    }
+  ],
+  "localLLM": {
+    "url": "llmUrl",
+    "model": "llmModel"
+  }
 }

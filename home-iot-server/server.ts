@@ -1,12 +1,11 @@
 import 'reflect-metadata';
 
 import { readConfig } from '../shared/helpers/conf';
-import { Conf } from '../shared/types/conf';
 import { DB } from './db';
 import { App } from './app';
 import { Routes } from './routes';
 
-const config: Conf = readConfig();
+const config = readConfig();
 const app = new App(config);
 const db = new DB(config);
 

@@ -1,4 +1,3 @@
-import { Conf } from '../shared/types/conf';
 import { Server } from '../shared/helpers/server';
 import { readConfig } from '../shared/helpers/conf';
 import analyzeHourlyBase from './analyze-hourly-base';
@@ -7,7 +6,7 @@ import { MappedTemperature, mapTemperature } from './util/mappers/mapTemperature
 import { mapLight, MappedLight } from './util/mappers/mapLight';
 import { parseDataBlock } from './util/parsers/parse-data-block';
 
-const config: Conf = readConfig();
+const config = readConfig();
 const server = new Server(config);
 const targetTime = process.argv[2]; // 'YYYY-MM-DD HH:MM:SS'
 if (targetTime && !/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(targetTime)) {

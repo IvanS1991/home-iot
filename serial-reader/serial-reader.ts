@@ -4,14 +4,15 @@
 
 import { SerialPort } from 'serialport';
 import { ReadlineParser } from '@serialport/parser-readline';
-import { Conf } from '../shared/types/conf';
+import { Config } from '../shared/types/config';
 import { Server } from '../shared/helpers/server';
 import { readConfig } from '../shared/helpers/conf';
 import axios from 'axios';
 
-const config: Conf = readConfig();
+const config = readConfig();
 
-const portName = config.serialPort;
+config.microcontrollers.forEach((microcontroller) => {
+  const portName = config.serialPort;
 const baudRate = 9600;
 
 const port = new SerialPort({ path: portName, baudRate });
@@ -49,3 +50,6 @@ parser.on('data', async (data: string) => {
 port.on('error', (err: Error) => {
   console.error('Error: ', err.message);
 });
+
+});
+

@@ -1,13 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { Conf } from '../shared/types/conf';
+import { Config } from '../shared/types/config';
 
 export class App {
   private readonly app: ReturnType<typeof express>;
 
-  constructor(private readonly config: Conf) {
+  constructor(private readonly config: Config) {
     this.app = express();
-    const port = config.serverPort;
 
     this.app.use(bodyParser.json());
   }
@@ -17,7 +16,7 @@ export class App {
   }
 
   start() {
-    const port = this.config.serverPort;
+    const port = this.config.edge.port;
 
     this.app.listen(port, () => {
       console.log(`Home IoT server listening on port ${port}`);
