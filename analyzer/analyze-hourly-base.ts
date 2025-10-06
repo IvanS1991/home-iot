@@ -1,12 +1,11 @@
 import axios from "axios";
-import JSON5 from "json5";
 import { Conf } from '../shared/types/conf';
 import { Server } from '../shared/helpers/server';
 import { PostHourlyReadingsRequestPayload, PostHourlyReadingsResponsePayload } from "../shared/types/hourly-readings";
 import { LLMRequestPayload, LLMResponsePayload } from "../shared/types/llm";
 import { HourlyAvgReading } from "../shared/models/HourlyAvgReading";
 import { TimeFrame } from "../shared/types/api";
-import { raw } from "body-parser";
+import { LLMAnalysisOutput } from "./types/llm-output";
 
 export default async function main<TOutput>(
     config: Conf,
@@ -15,7 +14,8 @@ export default async function main<TOutput>(
     timeFrame: TimeFrame,
     mapper: (data: HourlyAvgReading) => TOutput,
     getPrompt: (data: Array<TOutput>) => string,
-    getAnalysisValue: (data: TOutput) => number
+    getAnalysisValue: (data: TOutput) => number,
+    parseLLMResponse: (input: string) => LLMAnalysisOutput | null
 ) {
   // 1. Fetch hourly readings from your API
   const hourlyReadingUrl = server.getUrl("/reading/hourly");
@@ -41,18 +41,8 @@ export default async function main<TOutput>(
   const llmRes = await axios.post<LLMResponsePayload>(config.llmUrl, llmBody);
   const llmOutput = llmRes.data;
 
-  const indexOfJsonStart = llmOutput.response.indexOf('{');
-  if (indexOfJsonStart !== -1) {
-    llmOutput.response = llmOutput.response.slice(indexOfJsonStart);
-  }
-
-  const indexOfJsonEnd = llmOutput.response.indexOf('}');
-  if (indexOfJsonEnd !== -1) {
-    llmOutput.response = llmOutput.response.slice(0, indexOfJsonEnd + 1);
-  }
-
   try {
-    const llmJson = JSON5.parse(llmOutput.response.trim());
+    const llmJson = parseLLMResponse(llmOutput.response);
 
     // 3. Output the result
     console.log(llmJson);
@@ -66,9 +56,9 @@ export default async function main<TOutput>(
       minValue: Math.min(...values),
       maxValue: Math.max(...values),
       avgValue: values.reduce((sum: number, v: number) => sum + v, 0) / values.length,
-      comfortLevel: Number(llmJson.comfort_level),
-      trend: Number(llmJson.trend),
-      expectedChanges: llmJson.expected_changes
+      comfortLevel: Number(llmJson!.comfort_level),
+      trend: Number(llmJson!.trend),
+      expectedChanges: llmJson!.expected_changes
     };
 
     await axios.post(sixHourAnalysisUrl, analysisBody);

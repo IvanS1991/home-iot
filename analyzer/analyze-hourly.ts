@@ -5,30 +5,52 @@ import analyzeHourlyBase from './analyze-hourly-base';
 import { getTimeFrame } from "../shared/helpers/time";
 import { MappedTemperature, mapTemperature } from './util/mappers/mapTemperature';
 import { mapLight, MappedLight } from './util/mappers/mapLight';
+import { parseDataBlock } from './util/parsers/parse-data-block';
 
 const config: Conf = readConfig();
 const server = new Server(config);
-const timeFrame = getTimeFrame(6);
+const targetTime = process.argv[2]; // 'YYYY-MM-DD HH:MM:SS'
+if (targetTime && !/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(targetTime)) {
+  console.error("Usage: npm run analyze-hourly <targetTime> <targetReading>");
+  console.error("<targetTime> should be in 'YYYY-MM-DD HH:MM:SS' format.");
+  process.exit(1);
+}
+const targetReading = process.argv[3] || 'TL'; // 'T' or 'L' or 'TL' or 'LT'
+if (!/^[TL]{1,2}$/.test(targetReading)) {
+  console.error("Usage: npm run analyze-hourly <targetTime> <targetReading>");
+  console.error("<targetReading> should be 'T' for temperature, 'L' for light, or 'TL'/'LT' for both.");
+  process.exit(1);
+}
+const timeFrame = getTimeFrame(6, targetTime);
 
 async function main() {
   function getTaskMetadata(type: string) {
-    const target = type === "T" ? "temperature (in Celsius)" : "light level (in Decimal Percent)";
+    const target = type === "T" ? "indoor temperature (in Celsius)" : "indoor light level (in Decimal Percent)";
+    const valueRange = type === "T" ? "15C (cold) to 28C (hot)" : "0 (dark) to 1 (bright)";
 
     return `
-      Your role: Expert in home environment analysis and forecasting.
-      Analyze the following hourly ${target} data. Respond with the following data structure:
-      { comfort_level: 1 | 2 | 3, trend: 1 | 0 | -1, expected_changes: string }
-      
-      Where:
-      - comfort_level: 1 (low), 2 (medium), 3 (high) based on how comfortable the ${target} is.
-      - trend: 1 (rising), 0 (stable), -1 (falling) based on the ${target} trend. Stable means changes within 5%.
-      - expected_changes: a brief forecast and reason for this forecast.
+Rules to follow strictly:
+* Output ONLY the following data block, with no comments, no quotes, and no extra text.
+* Do not explain, interpret, or justify your answers.
+* Do not add any information beyond the required values.
+* Be concise and minimal.
 
-      [CRITICAL] Ensure valid JSON output. Ensure wrapping strings in double quotes.
-      [CRITICAL] Add no additional text outside the JSON.
-      [CRITICAL] Don't mention location, time, or any other metadata in the output.
-      [CRITICAL] Keep it concise and to the point.
-    `;
+Data structure (this is how the data looks like, do not include this in your output, but follow the format exactly):
+!data_begin
+comfort_level: number (1: low, 2: medium, 3: high)
+trend: number (1: rising, 0: stable, -1: falling)
+expected_changes: string (one sentence forecast)
+!data_end
+
+Format example (this is an example, do not include this in your output):
+!data_begin
+comfort_level: 2
+trend: -1
+expected_changes: The indoor light level is expected to decrease slightly during the next 6 hours.
+!data_end
+
+Analyze the following hourly ${target} data in the range ${valueRange}.
+`;
   }
 
   function getCurrentConditionsMetadata() {
@@ -58,25 +80,32 @@ async function main() {
     `;
   }
 
-  await analyzeHourlyBase(
-    config,
-    server,
-    "T",
-    timeFrame,
-    mapTemperature,
-    getTemperaturePrompt,
-    (data) => data.temperatureC
-  );
-  await analyzeHourlyBase(
-    config,
-    server,
-    "L",
-    timeFrame,
-    mapLight,
-    getLightPrompt,
-    (data) => data.lightLevel
-  );
-};
+  if (targetReading.includes("T")) {
+    await analyzeHourlyBase(
+      config,
+      server,
+      "T",
+      timeFrame,
+      mapTemperature,
+      getTemperaturePrompt,
+      (data) => data.temperatureC,
+      (input) => parseDataBlock(input)
+    );
+  }
+
+  if (targetReading.includes("L")) {
+    await analyzeHourlyBase(
+      config,
+      server,
+      "L",
+      timeFrame,
+      mapLight,
+      getLightPrompt,
+      (data) => data.lightLevel,
+      (input) => parseDataBlock(input)
+    );
+  }
+}
 
 main().catch(err => {
   console.error("Error running analyzer:", err);
