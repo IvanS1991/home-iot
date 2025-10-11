@@ -1,8 +1,8 @@
 #include "SensorRegistry.h"
 #include "CommHandler.h"
 
-CommHandler::CommHandler(SensorRegistry& sensorRegistry, LCDScreen& lcdScreen)
-  : sensors(sensorRegistry), lcd(lcdScreen) {}
+CommHandler::CommHandler(SensorRegistry& sensorRegistry, LCDScreen& lcdScreen, PushButton& commButton)
+  : sensors(sensorRegistry), lcd(lcdScreen), pushButton(commButton) {}
 
 void CommHandler::init(int baud) {
   Serial.begin(baud);
@@ -107,11 +107,9 @@ void CommHandler::handleClockReading(String line) {
 void CommHandler::printStatusToLED() {
   lcd.clear();
 
-  String tempLightText = "T:" + temp + "  L:" + light; // i.e. "T:25.8C L:62.5%"
+  String tempLightText = "T:" + temp + " L:" + light; // i.e. "25.8C 62.5%"
   lcd.write(tempLightText, 0, 0);
-  Serial.println(tempLightText);
 
-  String clockText = "        " + time; // i.e. "        09:12:25"
-  lcd.write(clockText, 1, 0);
-  Serial.println(clockText);
+  String cpuMemClockText = cpu + " " + memory + " " + time;
+  lcd.write(cpuMemClockText, 1, 0);
 }

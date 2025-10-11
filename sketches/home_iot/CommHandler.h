@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "SensorRegistry.h"
 #include "LCDScreen.h"
+#include "PushButton.h"
 
 #define HOME_READING "Home"
 #define EDGE_READING "Edge"
@@ -13,6 +14,7 @@ class CommHandler {
   private:
     SensorRegistry& sensors;
     LCDScreen& lcd;
+    PushButton& pushButton;
     String temp;
     String light;
     String cpu;
@@ -28,7 +30,7 @@ class CommHandler {
 
   public:
     CommHandler(); // Default constructor
-    CommHandler(SensorRegistry& sensorRegistry, LCDScreen& lcdScreen); // Default constructor
+    CommHandler(SensorRegistry& sensorRegistry, LCDScreen& lcdScreen, PushButton& commButton); // Default constructor
 
     void init(int baud);
     void read();

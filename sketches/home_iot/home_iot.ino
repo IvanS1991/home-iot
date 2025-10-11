@@ -5,10 +5,12 @@
 #include "SensorRegistry.h"
 #include "LCDScreen.h"
 #include "CommHandler.h"
+#include "PushButton.h"
 
 SensorRegistry sensors = SensorRegistry();
 LCDScreen lcdScreen(13, 12, 3, 2, 7, 6);
-CommHandler commHandler(sensors, lcdScreen);
+PushButton commButton(16);
+CommHandler commHandler(sensors, lcdScreen, commButton);
 
 void setup() {
   sensors.addSensor(new ArduinoKitPhototransistorSensor(26));
