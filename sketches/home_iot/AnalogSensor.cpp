@@ -13,5 +13,7 @@ int AnalogSensor::getReading(int samples) {
     sum += analogRead(sensorPin);
     delay(5);
   }
-  return sum / samples;
+  float multiplier = ANALOG_VREF / ANALOG_VREF_INTERNAL;
+
+  return (int)(sum / samples * multiplier);
 }

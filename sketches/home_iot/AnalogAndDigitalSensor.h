@@ -4,6 +4,9 @@
 #include <Arduino.h>
 #include "Sensor.h"
 
+#define ANALOG_VREF_INTERNAL 1.1
+#define ANALOG_VREF 3.3
+
 class AnalogSensor : public Sensor {
   public:
     AnalogSensor(int pin, char type, String vendor, String model);
