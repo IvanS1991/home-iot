@@ -20,6 +20,8 @@ class CommHandler {
     String cpu;
     String memory;
     String time;
+    String topLcdText;
+    String bottomLcdText;
 
     String getCommand(String line);
     void writeLCDError(String text);

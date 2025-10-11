@@ -107,18 +107,20 @@ void CommHandler::handleClockReading(String line) {
 }
 
 void CommHandler::printStatusToLED() {
-  lcd.clear();
-
-  Serial.println(temp.length());
-
   if (temp.length() == 0 || light.length() == 0 || cpu.length() == 0 || memory.length() == 0 || time.length() == 0) {
     writeLCDError("NO_DATA");
     return;
   }
 
-  String tempLightText = "T:" + temp + " L:" + light; // i.e. "25.8C 62.5%"
-  lcd.write(tempLightText, 0, 0);
+  String tempLightText = "T:" + temp + " L:" + light + "      ";
+  if (tempLightText != topLcdText) {
+    lcd.write(tempLightText, 0, 0);
+    topLcdText = tempLightText;
+  }
 
-  String cpuMemClockText = cpu + " " + memory + " " + time;
-  lcd.write(cpuMemClockText, 1, 0);
+  String cpuMemClockText = cpu + " " + memory + " " + time + "      ";
+  if (cpuMemClockText != bottomLcdText) {
+    lcd.write(cpuMemClockText, 1, 0);
+    bottomLcdText = cpuMemClockText;
+  }
 }

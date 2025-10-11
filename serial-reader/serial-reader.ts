@@ -106,6 +106,6 @@ config.microcontrollers.forEach((microcontroller) => {
     console.error('Error: ', err.message);
   });
 
-  setInterval(() => writeStatus(port), 1000); // Update status every minute
+  setInterval(() => writeStatus(port), 5000); // Update status every 10 seconds
 });
 
