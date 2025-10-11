@@ -5,6 +5,9 @@ LCDScreen::LCDScreen(int rs, int en, int d4, int d5, int d6, int d7)
 
 void LCDScreen::init() {
   lcd.begin(cols, rows);
+  clear();
+  write("Waiting for", 0, 0);
+  write("data...", 1, 0);
 }
 
 void LCDScreen::write(String text, int rowPos, int colPos) {

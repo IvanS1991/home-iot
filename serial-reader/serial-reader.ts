@@ -66,12 +66,18 @@ config.microcontrollers.forEach((microcontroller) => {
   const parser = port.pipe(new ReadlineParser({ delimiter: '\n' }));
   const server = new Server(config);
 
+  let lastDataTimestamp = 0;
+
   port.on('open', () => {
     console.log(`Serial port ${portName} opened at ${baudRate} baud.`);
     writeStatus(port); // Initial status write
   });
 
   parser.on('data', async (data: string) => {
+    if (Date.now() - lastDataTimestamp < 60000) {
+      return;
+    }
+
     console.log(`Received: ${data}`);
     // Parse new format: {pin}:{type}:{vendor}:{model}:{reading}
     const parts = data.trim().split(":");
@@ -87,6 +93,7 @@ config.microcontrollers.forEach((microcontroller) => {
           reading: Number(reading)
         });
         console.log('Server response:', response.data);
+        lastDataTimestamp = Date.now();
       } catch (err: any) {
         console.error('Failed to send reading:', err.message);
       }
@@ -99,6 +106,6 @@ config.microcontrollers.forEach((microcontroller) => {
     console.error('Error: ', err.message);
   });
 
-  setInterval(() => writeStatus(port), 60000); // Update status every minute
+  setInterval(() => writeStatus(port), 1000); // Update status every minute
 });
 

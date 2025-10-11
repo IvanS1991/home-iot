@@ -9,6 +9,8 @@ void CommHandler::init(int baud) {
 }
 
 void CommHandler::read() {
+  pushButton.tryToggle();
+
   if (Serial.available()) {
     String line = Serial.readStringUntil('\n'); // reads until newline
     line.trim();
@@ -106,6 +108,13 @@ void CommHandler::handleClockReading(String line) {
 
 void CommHandler::printStatusToLED() {
   lcd.clear();
+
+  Serial.println(temp.length());
+
+  if (temp.length() == 0 || light.length() == 0 || cpu.length() == 0 || memory.length() == 0 || time.length() == 0) {
+    writeLCDError("NO_DATA");
+    return;
+  }
 
   String tempLightText = "T:" + temp + " L:" + light; // i.e. "25.8C 62.5%"
   lcd.write(tempLightText, 0, 0);

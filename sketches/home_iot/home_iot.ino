@@ -23,5 +23,5 @@ void setup() {
 void loop() {
   commHandler.read();
   commHandler.writeSensorData();
-  commHandler.delaySec(60);
+  delay(100);
 }
