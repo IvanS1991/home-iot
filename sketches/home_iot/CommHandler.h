@@ -5,6 +5,7 @@
 #include "SensorRegistry.h"
 #include "LCDScreen.h"
 #include "PushButton.h"
+#include "CommStream.h"
 
 #define HOME_READING "Home"
 #define EDGE_READING "Edge"
@@ -15,6 +16,7 @@ class CommHandler {
     SensorRegistry& sensors;
     LCDScreen& lcd;
     PushButton& pushButton;
+    CommStream* stream;  // Abstract communication stream
     String temp;
     String light;
     String cpu;
@@ -22,6 +24,7 @@ class CommHandler {
     String time;
     String topLcdText;
     String bottomLcdText;
+    int lastDataSentTimestamp;
 
     String getCommand(String line);
     void writeLCDError(String text);
@@ -32,9 +35,9 @@ class CommHandler {
 
   public:
     CommHandler(); // Default constructor
-    CommHandler(SensorRegistry& sensorRegistry, LCDScreen& lcdScreen, PushButton& commButton); // Default constructor
+    CommHandler(SensorRegistry& sensorRegistry, LCDScreen& lcdScreen, PushButton& commButton, CommStream* commStream);
 
-    void init(int baud);
+    void init();
     void read();
     void writeLine(String text);
     void writeSensorData();

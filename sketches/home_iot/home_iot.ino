@@ -1,3 +1,4 @@
+#include "Config.h"
 #include "Sensor.h"
 #include "TMP36Sensor.h"
 #include "ArduinoKitPhototransistorSensor.h"
@@ -6,22 +7,31 @@
 #include "LCDScreen.h"
 #include "CommHandler.h"
 #include "PushButton.h"
+#include "SerialStream.h"
+#include "WiFiStream.h"
 
 SensorRegistry sensors = SensorRegistry();
-LCDScreen lcdScreen(13, 12, 3, 2, 7, 6);
+LCDScreen lcdScreen(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 PushButton commButton(16);
-CommHandler commHandler(sensors, lcdScreen, commButton);
+
+#if defined(USE_WIFI)
+  WiFiStream commStream(WIFI_SSID, WIFI_PASS, TCP_HOST, TCP_PORT); // Wireless comms
+#else
+  SerialStream commStream(BAUD_RATE);  // Serial communication at 9600 baud
+#endif
+
+SerialStream serialStream(BAUD_RATE);  // Serial communication at 9600 baud
+CommHandler commHandler(sensors, lcdScreen, commButton, &commStream);
 
 void setup() {
   sensors.addSensor(new ArduinoKitPhototransistorSensor(26));
   sensors.addSensor(new TMP36Sensor(28));
   sensors.init();
   lcdScreen.init();
-  commHandler.init(9600);
+  commHandler.init();
 }
 
 void loop() {
   commHandler.read();
   commHandler.writeSensorData();
-  delay(100);
 }

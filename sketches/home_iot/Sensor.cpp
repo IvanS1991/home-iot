@@ -1,4 +1,5 @@
 #include "Sensor.h"
+#include "Config.h"
 
 Sensor::Sensor() {}
 
@@ -13,5 +14,5 @@ Sensor::Sensor(int pin, char type, String vendor, String model) {
 
 String Sensor::getOutputLine() {
   int reading = getReading();
-  return String(sensorPin) + ":" + sensorType + ":" + sensorVendor + ":" + sensorModel + ":" + String(reading);
+  return String(BOARD_VREF) + ":" + String(BOARD_ADC_MAX) + ":" + String(sensorPin) + ":" + sensorType + ":" + sensorVendor + ":" + sensorModel + ":" + String(reading);
 }

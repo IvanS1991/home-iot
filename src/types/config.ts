@@ -1,4 +1,5 @@
 interface DatabaseConfig {
+  type: 'mysql' | 'mariadb' | 'postgres' | 'sqlite' | 'mssql' | 'oracle' | 'mongodb';
   host: string;
   port: number;
   user: string;
@@ -10,6 +11,7 @@ interface DatabaseConfig {
 interface EdgeConfig {
   host: string;
   port: number;
+  tcpPort: number;
   database: DatabaseConfig;
 }
 

@@ -7,10 +7,8 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "serial-reader": "npx ts-node ./serial-reader/serial-reader.ts",
-    "iot-server": "npx ts-node ./home-iot-server/server.ts",
-    "analyze-hourly": "npx ts-node ./analyzer/analyze-hourly.ts",
-    "status-emitter": "npx ts-node ./status-emitter/status-emitter.ts"
+    "build": "tsc",
+    "home-iot-server": "npm run build && node ./dist/server.js"
   },
   "dependencies": {
     "@serialport/parser-readline": "^13.0.0",

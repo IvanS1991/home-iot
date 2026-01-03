@@ -2,7 +2,9 @@
   "edge": {
     "host": "edgeHost",
     "port": 1111,
+    "tcpPort": 2222,
     "database": {
+      "type": "databaseType",
       "host": "dbHost",
       "port": 1111,
       "user": "dbUser",

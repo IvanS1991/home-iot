@@ -2,9 +2,10 @@ import fs from "fs";
 import path from "path";
 import { App } from "../app";
 import { DB } from "../db";
+import { EventLogger } from "../event-logger";
 
 export class Routes {
-  constructor(private readonly app: App, private readonly db: DB) { }
+  constructor(private readonly app: App, private readonly db: DB, private readonly eventLogger: EventLogger) { }
 
   async initialize() {
     const routesDir = path.resolve(__dirname);
@@ -17,7 +18,7 @@ export class Routes {
       const routeModule = await import(routePath);
       // Call the default export as a function
       if (typeof routeModule.default === 'function') {
-        routeModule.default(this.app, this.db);
+        routeModule.default(this.app, this.db, this.eventLogger);
       }
     }
   }

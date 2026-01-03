@@ -1,8 +1,7 @@
 import { DataSource, EntityTarget } from 'typeorm';
-import { Reading } from '../shared/models/Reading';
-import { Config } from '../shared/types/config';
-import { HourlyAvgReading } from '../shared/models/HourlyAvgReading';
-import { SixHourAnalysis } from '../shared/models/SixHourAnalysis';
+import { Readings } from './models/Reading';
+import { Config } from './types/config';
+import { Events } from './models/Event';
 
 export class DB {
   private dataSource: DataSource;
@@ -14,8 +13,8 @@ export class DB {
       password: config.edge.database.password,
       database: config.edge.database.name,
       port: Number(config.edge.database.port) || 3306,
-      type: 'mariadb',
-      entities: [Reading, HourlyAvgReading, SixHourAnalysis],
+      type: config.edge.database.type,
+      entities: [Readings, Events],
       synchronize: true,
     });
   }
@@ -24,7 +23,7 @@ export class DB {
     await this.dataSource.initialize();
   }
 
-  getRepo<TTarget extends (Reading | HourlyAvgReading | SixHourAnalysis)>(repo: EntityTarget<TTarget>) {
+  getRepo<TTarget extends (Readings | Events)>(repo: EntityTarget<TTarget>) {
     return this.dataSource.getRepository(repo);
   }
 }

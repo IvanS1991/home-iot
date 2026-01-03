@@ -3,12 +3,18 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import 'reflect-metadata';
 
 @Entity()
-export class Reading {
+export class Readings {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column('datetime')
   timestamp!: Date;
+
+  @Column('float')
+  vref!: number;
+
+  @Column()
+  adcMax!: number;
 
   @Column()
   pin!: number;

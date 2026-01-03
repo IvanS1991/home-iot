@@ -1,19 +1,19 @@
 #include "SensorRegistry.h"
 #include "CommHandler.h"
+#include "Config.h"
 
-CommHandler::CommHandler(SensorRegistry& sensorRegistry, LCDScreen& lcdScreen, PushButton& commButton)
-  : sensors(sensorRegistry), lcd(lcdScreen), pushButton(commButton) {}
+CommHandler::CommHandler(SensorRegistry& sensorRegistry, LCDScreen& lcdScreen, PushButton& commButton, CommStream* commStream)
+  : sensors(sensorRegistry), lcd(lcdScreen), pushButton(commButton), stream(commStream) {}
 
-void CommHandler::init(int baud) {
-  Serial.begin(baud);
+void CommHandler::init() {
+  stream->init();
 }
 
 void CommHandler::read() {
   pushButton.tryToggle();
 
-  if (Serial.available()) {
-    String line = Serial.readStringUntil('\n'); // reads until newline
-    line.trim();
+  if (stream->available()) {
+    String line = stream->readLine();
 
     String command = getCommand(line);
 
@@ -30,17 +30,26 @@ void CommHandler::read() {
 }
 
 void CommHandler::writeLine(String text) {
-  Serial.println(text);
+  stream->writeLine(text);
 }
 
 void CommHandler::writeSensorData() {
+  unsigned long currentTime = millis();
+
+  // Check if enough time has passed since last send
+  if (lastDataSentTimestamp != 0 && currentTime - lastDataSentTimestamp < DATA_EMIT_DELAY) {
+    return;  // Not enough time passed, skip
+  }
+
   String lines[MAX_SENSORS];
   int count = 0;
   sensors.getOutputLines(lines, count);
 
   for (int i = 0; i < count; ++i) {
-    Serial.println(lines[i]);
+    stream->writeLine(lines[i]);
   }
+
+  lastDataSentTimestamp = millis();
 }
 
 void CommHandler::delaySec(int totalDelaySec) {
